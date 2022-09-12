@@ -1,7 +1,7 @@
 import { Flex, Avatar, Box, Text } from "@chakra-ui/react";
 
 const MedicCard = (props) => {
-  const { name, specialitie } = props;
+  const { name, specialitie, crm } = props;
   return (
     <Flex
       border={"1px"}
@@ -14,6 +14,7 @@ const MedicCard = (props) => {
       <Box ml="3">
         <Text fontWeight="bold">{name}</Text>
         <Text fontSize="sm">{specialitie}</Text>
+        <Text fontSize="sm">{crm}</Text>
       </Box>
     </Flex>
   );
