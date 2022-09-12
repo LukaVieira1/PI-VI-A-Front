@@ -20,7 +20,6 @@ export function AuthProvider({ children }) {
       setInStorage("user", user);
       setUser(user);
     } catch (error) {
-      console.log(error);
       alert("Email ou senha inválidos");
     }
   };
@@ -28,6 +27,17 @@ export function AuthProvider({ children }) {
   const signout = () => {
     localStorage.clear();
     setUser(null);
+  };
+
+  const userType = () => {
+    console.log(user.crm);
+    if (!user.cpf && !user.crm) {
+      return "Secretaria";
+    } else if (user.cpf) {
+      return "Paciente";
+    } else if (user.crm) {
+      return "Médico";
+    }
   };
 
   return (
