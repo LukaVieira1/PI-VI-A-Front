@@ -1,4 +1,5 @@
 import MedicCard from "../components/MedicCard";
+import ScheduleCard from "../components/ScheduleCard";
 import {
   Flex,
   Text,
@@ -6,7 +7,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   Button,
@@ -18,17 +18,41 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getMedics } from "../services/medics";
+import { getSchedules, schedule } from "../services/schedules";
+import { useAuth } from "../context/auth-context";
 
 function PublicPage() {
   const [medics, setMedics] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [medicCrm, setMedicCrm] = useState("");
+  const [trigger, setTrigger] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  let auth = useAuth();
 
   const handleSchedule = (event) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
+    const date = formData.get("date");
+    const observation = formData.get("observation");
+    const data = {
+      date,
+      observation,
+      medicCrm,
+      pacientCpf: auth.user.cpf,
+      status: "Agendado",
+    };
+
+    try {
+      const request = async () => {
+        const response = await schedule(data);
+        onClose();
+        setTrigger(!trigger);
+        return response;
+      };
+      request();
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -42,18 +66,34 @@ function PublicPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    try {
+      const request = async () => {
+        const response = await getSchedules();
+
+        setSchedules(response.data);
+      };
+      request();
+    } catch (error) {}
+  }, [trigger]);
+
   return (
     <Flex
       mt={"20"}
-      alignItems={"center"}
-      justifyContent={"space-between"}
+      alignItems={"start"}
+      justifyContent={"space-evenly"}
       flexDirection="row"
     >
-      <Flex mt={"20"} alignItems={"center"} flexDirection="column">
-        <Text mt={"20px"}>Selecione um medico para agendar uma consulta</Text>
+      <Flex alignItems={"center"} flexDirection="column">
+        <Text>Selecione um medico para agendar uma consulta</Text>
         <Flex flexDirection={"column"} gap="10px" mt={"10px"} maxW="250px">
           {medics.map((medic) => (
-            <button onClick={onOpen}>
+            <button
+              onClick={() => {
+                onOpen();
+                setMedicCrm(medic.crm);
+              }}
+            >
               <MedicCard
                 name={medic?.name}
                 specialitie={medic?.specialty}
@@ -61,27 +101,37 @@ function PublicPage() {
               />
               <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
-                <ModalContent>
+                <ModalContent p={"20px"}>
+                  <ModalCloseButton />
                   <FormControl
                     as={"form"}
                     onSubmit={handleSchedule}
                     mt={["32px"]}
                   >
                     <ModalHeader>Agendamento com {medic?.name}</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                      <FormLabel htmlFor="email">Horario</FormLabel>
-                      <Input name="email" type="email" placeholder="Email" />
+                    <ModalBody mb={"25px"}>
                       <Flex justify={["space-between"]}>
-                        <FormLabel mt="32px" htmlFor="senha">
-                          Senha
+                        <FormLabel mt="32px" htmlFor="observation">
+                          Observação
                         </FormLabel>
                       </Flex>
                       <InputGroup>
                         <Input
-                          name="password"
-                          type="password"
-                          placeholder="Senha"
+                          name="observation"
+                          type="text"
+                          placeholder="Observação"
+                        />
+                      </InputGroup>
+                      <Flex justify={["space-between"]}>
+                        <FormLabel mt="32px" htmlFor="date">
+                          Data
+                        </FormLabel>
+                      </Flex>
+                      <InputGroup>
+                        <Input
+                          name="date"
+                          type="text"
+                          placeholder="DD/MM/YYYY"
                         />
                       </InputGroup>
                     </ModalBody>
@@ -98,6 +148,20 @@ function PublicPage() {
             </button>
           ))}
         </Flex>
+      </Flex>
+      <Flex alignItems={"center"} flexDirection="column">
+        <Text> Suas Consultas agendadas:</Text>
+        {schedules.map((schedule) => (
+          <ScheduleCard
+            id={schedule.id}
+            date={schedule.date}
+            observation={schedule.observation}
+            medic={schedule.medic?.name}
+            patient={schedule.pacient?.name}
+            status={schedule.status}
+            secretary={schedule.secretaryId}
+          />
+        ))}
       </Flex>
     </Flex>
   );
