@@ -15,14 +15,17 @@ import {
   FormLabel,
   Input,
   InputGroup,
+  Select,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getMedics } from "../services/medics";
 import { getSchedules, schedule } from "../services/schedules";
 import { useAuth } from "../context/auth-context";
+import { getPacients } from "../services/pacients";
 
-function PublicPage() {
+function SecretaryPage() {
   const [medics, setMedics] = useState([]);
+  const [pacients, setPacients] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [medicCrm, setMedicCrm] = useState("");
   const [trigger, setTrigger] = useState(false);
@@ -36,11 +39,13 @@ function PublicPage() {
     const formData = new FormData(event.currentTarget);
     const date = formData.get("date");
     const observation = formData.get("observation");
+    const pacientCpf = formData.get("pacient");
+
     const data = {
       date,
       observation,
       medicCrm,
-      pacientCpf: auth.user.cpf,
+      pacientCpf,
       status: "Agendado",
     };
 
@@ -58,8 +63,10 @@ function PublicPage() {
   useEffect(() => {
     try {
       const request = async () => {
-        const response = await getMedics();
-        setMedics(response.data?.data?.users);
+        const medics = await getMedics();
+        setMedics(medics.data?.data?.users);
+        const pacients = await getPacients();
+        setPacients(pacients.data?.data?.users);
       };
       request();
     } catch (error) {}
@@ -110,6 +117,17 @@ function PublicPage() {
                   >
                     <ModalHeader>Agendamento com {medic?.name}</ModalHeader>
                     <ModalBody mb={"25px"}>
+                      <FormLabel mt="32px" htmlFor="pacient">
+                        Paciente
+                      </FormLabel>
+                      <Select
+                        name="pacient"
+                        placeholder="Selecione um paciente"
+                      >
+                        {pacients.map((pacient) => (
+                          <option value={pacient.cpf}>{pacient.name}</option>
+                        ))}
+                      </Select>
                       <Flex justify={["space-between"]}>
                         <FormLabel mt="32px" htmlFor="observation">
                           Observação
@@ -150,7 +168,7 @@ function PublicPage() {
         </Flex>
       </Flex>
       <Flex alignItems={"center"} flexDirection="column">
-        <Text> Suas Consultas agendadas:</Text>
+        <Text> Consultas:</Text>
         {schedules.map((schedule) => (
           <ScheduleCard
             id={schedule.id}
@@ -167,4 +185,4 @@ function PublicPage() {
   );
 }
 
-export default PublicPage;
+export default SecretaryPage;
