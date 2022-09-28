@@ -10,6 +10,7 @@ function PublicPage() {
   const navigate = useNavigate();
   let auth = useAuth();
 
+  //Verifica qual tipo de user é para redirecionar para a rota correta
   const redirect = () => {
     if (!auth.user.cpf && !auth.user.crm) {
       navigate("/secretary-page", { replace: true });
@@ -19,11 +20,12 @@ function PublicPage() {
       navigate("/medic-page", { replace: true });
     }
   };
-
+  //Recebe a lista de medicos e armazena em uma variavel na primeira renderização da pagina
   useEffect(() => {
     try {
       const request = async () => {
         const response = await getMedics();
+        console.log(response);
         setMedics(response.data?.data?.users);
       };
       request();

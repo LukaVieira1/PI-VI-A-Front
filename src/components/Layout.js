@@ -14,7 +14,7 @@ function Layout() {
         mb={"10px"}
       >
         <Flex justify="center" py={"30px"} textColor={"black"}>
-          MedClinic
+          MedSystem
         </Flex>
       </Heading>
       <AuthStatus />

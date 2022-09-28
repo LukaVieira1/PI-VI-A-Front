@@ -29,17 +29,6 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  const userType = () => {
-    console.log(user.crm);
-    if (!user.cpf && !user.crm) {
-      return "Secretaria";
-    } else if (user.cpf) {
-      return "Paciente";
-    } else if (user.crm) {
-      return "Médico";
-    }
-  };
-
   return (
     <AuthContext.Provider value={{ user, signin, signout }}>
       {children}
