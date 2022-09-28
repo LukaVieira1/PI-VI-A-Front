@@ -15,6 +15,7 @@ function Login() {
   const { signin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
+  //Recebe as informações necessarias pro login e faz a request do mesmo
   async function handleSubmit(event) {
     setIsLoading(true);
     event.preventDefault();
@@ -55,6 +56,16 @@ function Login() {
             placeholder="Senha"
           />
         </InputGroup>
+        <Button
+          isLoading={isLoading}
+          variant="solid"
+          mt="40px"
+          width={["100%"]}
+          height={["40px"]}
+          onClick={() => navigate("/register")}
+        >
+          Register
+        </Button>
         <Button
           isLoading={isLoading}
           variant="solid"

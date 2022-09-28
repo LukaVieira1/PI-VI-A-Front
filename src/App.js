@@ -10,6 +10,7 @@ import SecretaryPage from "./routes/SecretaryPage";
 
 function App() {
   return (
+    //Arquivo onde cria as rotas e designa a um 'arquivo'
     <AuthProvider>
       <Routes>
         <Route element={<Layout />}>
@@ -19,6 +20,7 @@ function App() {
           <Route
             path="/pacient-page"
             element={
+              //Rotas com RequireAuth necessitam de estar logadas para entrar nas mesmas
               <RequireAuth>
                 <PacientPage />
               </RequireAuth>

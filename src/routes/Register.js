@@ -20,6 +20,7 @@ function Register() {
 
   const [type, setType] = useState("");
 
+ //Funçao responsavel por receber as variaveis para o registro e realizar o request do mesmo
   async function handleSubmit(event) {
     setIsLoading(true);
     event.preventDefault();

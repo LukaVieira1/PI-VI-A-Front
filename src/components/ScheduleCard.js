@@ -1,23 +1,17 @@
 import { Flex, Box, Text, Button } from "@chakra-ui/react";
 
-import { updateSchedules } from "../services/schedules";
-
 const ScheduleCard = (props) => {
-  const { date, medic, patient, status, secretary, observation, id } = props;
+  const {
+    date,
+    medic,
+    patient,
+    status,
+    secretary,
+    observation,
+    id,
+    handleCancelSchedule,
+  } = props;
 
-  const cancelSchedule = () => {
-    const data = {
-      status: "Cancelado",
-    };
-    try {
-      const request = async () => {
-        const response = await updateSchedules(id, data);
-
-        return response;
-      };
-      request();
-    } catch (error) {}
-  };
   return (
     <Flex
       mt={"10px"}
@@ -35,7 +29,13 @@ const ScheduleCard = (props) => {
         <Text fontSize="sm">Status: {status}</Text>
         <Text fontSize="sm">Observação: {observation}</Text>
         {secretary && <Text fontSize="sm">Marcado por secretario (a)</Text>}
-        <Button mt={"10px"} bg={"red"} onClick={cancelSchedule}>
+        <Button
+          mt={"10px"}
+          bg={"red"}
+          onClick={() => {
+            handleCancelSchedule(id);
+          }}
+        >
           Cancelar consulta
         </Button>
       </Box>

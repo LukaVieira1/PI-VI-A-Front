@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getMedics } from "../services/medics";
-import { getSchedules, schedule } from "../services/schedules";
+import { getSchedules, schedule, updateSchedules } from "../services/schedules";
 import { useAuth } from "../context/auth-context";
 
 function PacientPage() {
@@ -30,6 +30,21 @@ function PacientPage() {
 
   let auth = useAuth();
 
+  const handleCancelSchedule = (id) => {
+    const data = {
+      status: "Cancelado",
+    };
+    try {
+      const request = async () => {
+        const response = await updateSchedules(id, data);
+        setTrigger(!trigger);
+        return response;
+      };
+      request();
+    } catch (error) {}
+  };
+
+  //Funçao responsavel por receber as variaveis para o agendamento e realizar o request do mesmo
   const handleSchedule = (event) => {
     event.preventDefault();
 
@@ -55,6 +70,7 @@ function PacientPage() {
     } catch (error) {}
   };
 
+  //Busca os medicos e armazena em um estado na primeira renderização da pagina
   useEffect(() => {
     try {
       const request = async () => {
@@ -66,6 +82,7 @@ function PacientPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //Busca as consultas e armazena em um estado na primeira renderizaçao da pagina
   useEffect(() => {
     try {
       const request = async () => {
@@ -160,6 +177,7 @@ function PacientPage() {
             patient={schedule.pacient?.name}
             status={schedule.status}
             secretary={schedule.secretaryId}
+            handleCancelSchedule={handleCancelSchedule}
           />
         ))}
       </Flex>
