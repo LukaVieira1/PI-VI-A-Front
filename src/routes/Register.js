@@ -20,7 +20,7 @@ function Register() {
 
   const [type, setType] = useState("");
 
- //Funçao responsavel por receber as variaveis para o registro e realizar o request do mesmo
+  //Funçao responsavel por receber as variaveis para o registro e realizar o request do mesmo
   async function handleSubmit(event) {
     setIsLoading(true);
     event.preventDefault();
@@ -144,7 +144,6 @@ function Register() {
           <Stack direction="row">
             <Radio value="pacient">Paciente</Radio>
             <Radio value="medic">Medico (a)</Radio>
-            <Radio value="secretary">Secretario (a)</Radio>
           </Stack>
         </RadioGroup>
 
